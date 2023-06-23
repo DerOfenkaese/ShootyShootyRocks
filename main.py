@@ -1,4 +1,4 @@
-#2.0
+#2.1
 import pygame
 from sys import exit
 from random import randint
@@ -88,7 +88,7 @@ class Meteor(pygame.sprite.Sprite):
         self.image = pygame.image.load("Videogaim/graphics/Meteor_alt.png").convert_alpha()
         self.height = randint(70, 720)
         self.rect = self.image.get_rect(bottomleft = (1280,self.height))
-        self.speed = 10
+        self.speed = randint(8, 20)
 
     def movement(self):
         if(self.rect.right > 0):
