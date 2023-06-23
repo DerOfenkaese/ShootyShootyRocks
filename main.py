@@ -113,7 +113,7 @@ class Meteor(pygame.sprite.Sprite):
 class StormMeteor(Meteor):
     def __init__(self):
         super().__init__()
-        self.speed = 25
+        self.speed = random.randint(18,25)
 
 
 #setting variables
@@ -152,6 +152,7 @@ spaceship.add(Spaceship())
 
 obstacle_counter = 0
 obstacle_interval = 120   #default = 120
+obstacle_multiplier = 50
 obstacles = pygame.sprite.Group()
 obstacles.add(Meteor())
 
@@ -227,6 +228,9 @@ while True:
                 spaceship.sprite.powerup = "gattling"
 
         if gameplay_event == "default":
+            if score % obstacle_multiplier == 0 and score != 0:
+                obstacle_interval /= 2
+                obstacle_multiplier *= 2
             if obstacle_counter >= obstacle_interval:
                 obstacles.add(Meteor())
                 obstacle_counter = 0
