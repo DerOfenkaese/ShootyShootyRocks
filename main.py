@@ -55,7 +55,7 @@ class MirrorShip(Spaceship):
     def __init__(self, spaceship_y):
         super().__init__()
         self.image = pygame.image.load(PATH+"Videogaim/graphics/mirrorship.png").convert_alpha()
-        self.rect = self.image.get_rect(midtop = (1200, spaceship_y))
+        self.rect = self.image.get_rect(midtop = (1360, spaceship_y))
         self.powerup = "enemy"
 
 
@@ -70,7 +70,7 @@ class Laser(pygame.sprite.Sprite):
         self.rect.x += self.speed
     
     def destroy(self):
-        if self.rect.x >= 1300:
+        if self.rect.x >= 1460:
             self.kill()
 
     def update(self):
@@ -93,8 +93,8 @@ class Meteor(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load(PATH+"Videogaim/graphics/Meteor_alt.png").convert_alpha()
-        self.height = randint(70, 720)
-        self.rect = self.image.get_rect(bottomleft = (1280,self.height))
+        self.height = randint(120, 720)
+        self.rect = self.image.get_rect(bottomleft = (1440,self.height))
         self.speed = randint(8, 20)
 
     def movement(self):
@@ -137,7 +137,7 @@ boss_count = 0
 meteorstorm_counter = 0
 
 # -display & clock
-screen = pygame.display.set_mode((1280,720), pygame.SCALED|pygame.FULLSCREEN)
+screen = pygame.display.set_mode((1440,720), pygame.SCALED|pygame.FULLSCREEN)
 pygame.display.set_caption("Shooty Shooty Rocks")
 gameIcon = pygame.image.load(PATH+"Videogaim/graphics/icon.png")
 pygame.display.set_icon(gameIcon)
@@ -174,18 +174,18 @@ lives_surface = text_font.render("Lives: " + str(lives), False, "white")
 lives_rect = lives_surface.get_rect(topleft = font_rect.bottomleft)
 
 pause_surface = pause_font.render("Paused", False, "white")
-pause_rect = pause_surface.get_rect(center = (640,360))
+pause_rect = pause_surface.get_rect(center = (720,360))
 
 menu_surface = pause_font.render("Shooty Shooty Rocks",False,"#ffffff")
-menu_rect = menu_surface.get_rect(center = (640,190))
+menu_rect = menu_surface.get_rect(center = (720,190))
 menu_sub_surface = text_font.render("Press Space to start",False,"#ffffff")
-menu_sub_rect = menu_sub_surface.get_rect(center = (640,660))
+menu_sub_rect = menu_sub_surface.get_rect(center = (720,660))
 menu_spaceship = pygame.image.load(PATH+"Videogaim/graphics/spaceship_alt.png").convert_alpha()
 menu_spaceship = pygame.transform.rotozoom(menu_spaceship,90,2)
-menu_spaceship_rect = menu_spaceship.get_rect(center = (640,380))
+menu_spaceship_rect = menu_spaceship.get_rect(center = (720,380))
 
 warning = pygame.image.load(PATH+"Videogaim/graphics/warning.png")
-warning_rect = warning.get_rect(center = (1200, 380))
+warning_rect = warning.get_rect(center = (1360, 380))
 
 #sounds
 laser_sound = pygame.mixer.Sound(PATH+"Videogaim/sounds/laser.mp3")
@@ -223,10 +223,10 @@ while True:
             nebula2_rect.x -= 1
             background_count = 0
 
-        if nebula_rect.right == 1280:
-            nebula2_rect.left = 1280
-        if nebula2_rect.right == 1280:
-            nebula_rect.left = 1280 
+        if nebula_rect.right == 1440:
+            nebula2_rect.left = 1440
+        if nebula2_rect.right == 1440:
+            nebula_rect.left = 1440 
 
         if score > 10 and gameplay_event == "default":
             if randint(0, int((1000/(score/10))*1000) ) == 1:
