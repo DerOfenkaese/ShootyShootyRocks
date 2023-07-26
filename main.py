@@ -101,11 +101,11 @@ class Meteor(pygame.sprite.Sprite):
         if(self.rect.right > 0):
             self.rect.x -= self.speed
 
-    def kill(self):
+    def kill(self, no_suicide=True):
         super(Meteor, self).kill()
         if break_sound.get_num_channels() >= 1:
             pass
-        else:
+        elif no_suicide:
             break_sound.play()
           
 
@@ -115,7 +115,7 @@ class Meteor(pygame.sprite.Sprite):
 
     def destroy(self):
         if self.rect.right <= 0:
-            self.kill() 
+            self.kill(no_suicide=False) 
 
 class StormMeteor(Meteor):
     def __init__(self):
