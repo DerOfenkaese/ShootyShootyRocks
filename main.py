@@ -2,6 +2,7 @@
 import pygame
 from sys import exit
 from random import randint
+import os
 
 PATH = os.path.abspath(".") + "/"
 pygame.init()
@@ -14,15 +15,19 @@ class Spaceship(pygame.sprite.Sprite):
         self.powerup = "default"
 
     def spaceship_input(self):
-        keys = pygame.key.get_pressed()    
-        if keys[pygame.K_w] or keys[pygame.K_UP]:
-            if(self.rect.top > 0):
-                self.rect.y -= 15
-        if keys[pygame.K_s] or keys[pygame.K_DOWN]:
-            if(self.rect.bottom < 720):
-                self.rect.y += 15
-        if keys[pygame.K_SPACE]:
-            self.shoot()
+        mouse_x = pygame.mouse.get_pos()[0]
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN and mouse_x < 720:
+                mouse_y = pygame.mouse.get_pos()[1]
+                if abs(mouse_y - self.rect.y) < 15:
+                    self.rect.y = mouse_y
+                elif mouse_y < self.rect.y and self.rect.top > 0:
+                    self.rect.y -= 15
+                elif mouse_y > self.rect.y and self.rect.bottom < 720:
+                    self.rect.y += 15  
+            if event.type == pygame.MOUSEBUTTONDOWN and mouse_x > 720:
+                self.shoot()
+
 
     def shoot(self):
         if self.powerup == "default"  and len(projectiles.sprites()) < 1:
