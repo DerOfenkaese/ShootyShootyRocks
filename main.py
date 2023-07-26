@@ -16,17 +16,18 @@ class Spaceship(pygame.sprite.Sprite):
 
     def spaceship_input(self):
         mouse_x = pygame.mouse.get_pos()[0]
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN and mouse_x < 720:
-                mouse_y = pygame.mouse.get_pos()[1]
-                if abs(mouse_y - self.rect.y) < 15:
-                    self.rect.y = mouse_y
-                elif mouse_y < self.rect.y and self.rect.top > 0:
-                    self.rect.y -= 15
-                elif mouse_y > self.rect.y and self.rect.bottom < 720:
-                    self.rect.y += 15  
-            if event.type == pygame.MOUSEBUTTONDOWN and mouse_x > 720:
-                self.shoot()
+        pygame.event.get()
+        touch = pygame.mouse.get_pressed()[0]
+        if touch and mouse_x < 720:
+            mouse_y = pygame.mouse.get_pos()[1]
+            if abs(mouse_y - self.rect.y) < 15:
+                self.rect.y = mouse_y
+            elif mouse_y < self.rect.y and self.rect.top > 0:
+                self.rect.y -= 15
+            elif mouse_y > self.rect.y and self.rect.bottom < 720:
+                self.rect.y += 15  
+        if touch and mouse_x > 720:
+            self.shoot()
 
 
     def shoot(self):
@@ -119,7 +120,7 @@ class Meteor(pygame.sprite.Sprite):
 class StormMeteor(Meteor):
     def __init__(self):
         super().__init__()
-        self.speed = random.randint(18,25)
+        self.speed = randint(18,25)
 
 
 #setting variables
@@ -316,17 +317,16 @@ while True:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    game_active = True
-                    #reset values
-                    lives = 3
-                    score = 0
-                    obstacles.empty()
-                    projectiles.empty()
-                    gameplay_event = "default"
-                    font_surface = text_font.render("Score: " + str(score), False, "white")
-                    lives_surface = text_font.render("Lives: " + str(lives), False, "white")
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                game_active = True
+                #reset values
+                lives = 3
+                score = 0
+                obstacles.empty()
+                projectiles.empty()
+                gameplay_event = "default"
+                font_surface = text_font.render("Score: " + str(score), False, "white")
+                lives_surface = text_font.render("Lives: " + str(lives), False, "white")
         screen.blit(nebula,nebula_rect)
         screen.blit(nebula2,nebula2_rect)
         screen.blit(darken,(0,0))
