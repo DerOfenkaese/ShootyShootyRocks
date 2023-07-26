@@ -131,7 +131,7 @@ boss_count = 0
 meteorstorm_counter = 0
 
 # -display & clock
-screen = pygame.display.set_mode((1280,720))
+screen = pygame.display.set_mode((1280,720), pygame.SCALED|pygame.FULLSCREEN)
 pygame.display.set_caption("Shooty Shooty Rocks")
 gameIcon = pygame.image.load(PATH+"Videogaim/graphics/icon.png")
 pygame.display.set_icon(gameIcon)
