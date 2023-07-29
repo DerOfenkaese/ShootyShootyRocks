@@ -11,6 +11,12 @@ graphics = "graphics"
 
 axolotl = False
 
+with open(PATH+"Videogaim/save.txt") as save:
+    bool_string = save.read()
+    if bool_string == "True":
+        axolotl = True
+
+
 if axolotl:
     graphics = "axolotl_graphics"
 
@@ -186,7 +192,7 @@ pause_rect = pause_surface.get_rect(center = (720,360))
 
 menu_surface = pause_font.render("Shooty Shooty Rocks",False,"#ffffff")
 menu_rect = menu_surface.get_rect(center = (720,190))
-menu_sub_surface = text_font.render("Press Space to start",False,"#ffffff")
+menu_sub_surface = text_font.render("Press to start",False,"#ffffff")
 menu_sub_rect = menu_sub_surface.get_rect(center = (720,660))
 menu_spaceship = pygame.image.load(PATH+"Videogaim/"+graphics+"/spaceship_alt.png").convert_alpha()
 menu_spaceship = pygame.transform.rotozoom(menu_spaceship,90,2)
@@ -325,7 +331,14 @@ while True:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and menu_spaceship_rect.collidepoint(pygame.mouse.get_pos()):
+                if axolotl:
+                    with open(PATH+"Videogaim/save.txt", "w") as save:
+                        save.write("False")
+                else:
+                    with open(PATH+"Videogaim/save.txt", "w") as save:
+                        save.write("True")
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 game_active = True
                 #reset values
                 lives = 3
