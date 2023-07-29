@@ -333,6 +333,7 @@ while True:
                 obstacles.empty()
                 projectiles.empty()
                 gameplay_event = "default"
+                obstacle_interval = 120
                 font_surface = text_font.render("Score: " + str(score), False, "white")
                 lives_surface = text_font.render("Lives: " + str(lives), False, "white")
         screen.blit(nebula,nebula_rect)
