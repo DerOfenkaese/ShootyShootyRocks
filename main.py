@@ -1,14 +1,30 @@
-#2.1
+#2.2
 import pygame
 from sys import exit
 from random import randint
+import os
 
+PATH = os.path.abspath(".") + "/"
 pygame.init()
+
+graphics = "graphics"
+
+axolotl = False
+
+with open(PATH+"Videogaim/save.txt") as save:
+    bool_string = save.read()
+    if bool_string == "True":
+        axolotl = True
+
+
+if axolotl:
+    graphics = "axolotl_graphics"
+
 
 class Spaceship(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("Videogaim/graphics/spaceship_alt.png").convert_alpha()
+        self.image = pygame.image.load(PATH+"Videogaim/"+graphics+"/spaceship_alt.png").convert_alpha()
         self.rect = self.image.get_rect(topleft = (30,320))
         self.powerup = "default"
 
@@ -47,7 +63,7 @@ class Spaceship(pygame.sprite.Sprite):
 class MirrorShip(Spaceship):
     def __init__(self, spaceship_y):
         super().__init__()
-        self.image = pygame.image.load("Videogaim/graphics/mirrorship.png").convert_alpha()
+        self.image = pygame.image.load(PATH+"Videogaim/"+graphics+"/mirrorship.png").convert_alpha()
         self.rect = self.image.get_rect(midtop = (1200, spaceship_y))
         self.powerup = "enemy"
 
@@ -55,7 +71,7 @@ class MirrorShip(Spaceship):
 class Laser(pygame.sprite.Sprite):
     def __init__(self, pos):
         super().__init__()
-        self.image = pygame.image.load("Videogaim/graphics/laser.png").convert_alpha()
+        self.image = pygame.image.load(PATH+"Videogaim/"+graphics+"/laser.png").convert_alpha()
         self.rect = self.image.get_rect(center = pos)
         self.speed = 20
 
@@ -78,14 +94,14 @@ class GattlingLaser(Laser):
 class EnemyLaser(Laser):
     def __init__(self, pos):
         super().__init__(pos)
-        self.image = pygame.image.load("Videogaim/graphics/enemylaser.png").convert_alpha()
+        self.image = pygame.image.load(PATH+"Videogaim/"+graphics+"/enemylaser.png").convert_alpha()
         self.speed = -20
         
 
 class Meteor(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("Videogaim/graphics/Meteor_alt.png").convert_alpha()
+        self.image = pygame.image.load(PATH+"Videogaim/"+graphics+"/Meteor_alt.png").convert_alpha()
         self.height = randint(70, 720)
         self.rect = self.image.get_rect(bottomleft = (1280,self.height))
         self.speed = randint(8, 20)
@@ -94,11 +110,11 @@ class Meteor(pygame.sprite.Sprite):
         if(self.rect.right > 0):
             self.rect.x -= self.speed
 
-    def kill(self):
+    def kill(self, not_suicide=True):
         super(Meteor, self).kill()
         if break_sound.get_num_channels() >= 1:
             pass
-        else:
+        elif not_suicide:
             break_sound.play()
           
 
@@ -108,12 +124,12 @@ class Meteor(pygame.sprite.Sprite):
 
     def destroy(self):
         if self.rect.right <= 0:
-            self.kill() 
+            self.kill(not_suicide=False) 
 
 class StormMeteor(Meteor):
     def __init__(self):
         super().__init__()
-        self.speed = random.randint(18,25)
+        self.speed = randint(18,25)
 
 
 #setting variables
@@ -132,20 +148,20 @@ meteorstorm_counter = 0
 # -display & clock
 screen = pygame.display.set_mode((1280,720))
 pygame.display.set_caption("Shooty Shooty Rocks")
-gameIcon = pygame.image.load("Videogaim/graphics/icon.png")
+gameIcon = pygame.image.load(PATH+"Videogaim/graphics/icon.png")
 pygame.display.set_icon(gameIcon)
 clock = pygame.time.Clock()
 
-darken = pygame.image.load("Videogaim/graphics/darken.png").convert_alpha()
+darken = pygame.image.load(PATH+"Videogaim/"+graphics+"/darken.png").convert_alpha()
 
 background_count = 0
-nebula = pygame.image.load("Videogaim/graphics/Nebula1.png").convert()
+nebula = pygame.image.load(PATH+"Videogaim/"+graphics+"/Nebula1.png").convert()
 nebula_rect = nebula.get_rect(topleft = (background,0))
-nebula2 = pygame.image.load("Videogaim/graphics/Nebula1.png").convert()
+nebula2 = pygame.image.load(PATH+"Videogaim/"+graphics+"/Nebula1.png").convert()
 nebula2_rect = nebula2.get_rect(topleft = (background,0))
 
-text_font = pygame.font.Font("Videogaim/Font/Pixeltype.ttf", 50)
-pause_font = pygame.font.Font("Videogaim/Font/Pixeltype.ttf", 120)
+text_font = pygame.font.Font(PATH+"Videogaim/Font/Pixeltype.ttf", 50)
+pause_font = pygame.font.Font(PATH+"Videogaim/Font/Pixeltype.ttf", 120)
 
 spaceship = pygame.sprite.GroupSingle()
 spaceship.add(Spaceship())
@@ -173,16 +189,16 @@ menu_surface = pause_font.render("Shooty Shooty Rocks",False,"#ffffff")
 menu_rect = menu_surface.get_rect(center = (640,190))
 menu_sub_surface = text_font.render("Press Space to start",False,"#ffffff")
 menu_sub_rect = menu_sub_surface.get_rect(center = (640,660))
-menu_spaceship = pygame.image.load("Videogaim/graphics/spaceship_alt.png").convert_alpha()
+menu_spaceship = pygame.image.load(PATH+"Videogaim/"+graphics+"/spaceship_alt.png").convert_alpha()
 menu_spaceship = pygame.transform.rotozoom(menu_spaceship,90,2)
 menu_spaceship_rect = menu_spaceship.get_rect(center = (640,380))
 
-warning = pygame.image.load("Videogaim/graphics/warning.png")
+warning = pygame.image.load(PATH+"Videogaim/"+graphics+"/warning.png")
 warning_rect = warning.get_rect(center = (1200, 380))
 
 #sounds
-laser_sound = pygame.mixer.Sound("Videogaim/sounds/laser.mp3")
-break_sound = pygame.mixer.Sound("Videogaim/sounds/explosion.mp3")
+laser_sound = pygame.mixer.Sound(PATH+"Videogaim/sounds/laser.mp3")
+break_sound = pygame.mixer.Sound(PATH+"Videogaim/sounds/explosion.mp3")
 
 #running loop
 while True:
@@ -310,6 +326,13 @@ while True:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+            if event.type == pygame.MOUSEBUTTONDOWN and menu_spaceship_rect.collidepoint(pygame.mouse.get_pos()):
+                if axolotl:
+                    with open(PATH+"Videogaim/save.txt", "w") as save:
+                        save.write("False")
+                else:
+                    with open(PATH+"Videogaim/save.txt", "w") as save:
+                        save.write("True")
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     game_active = True
@@ -319,6 +342,8 @@ while True:
                     obstacles.empty()
                     projectiles.empty()
                     gameplay_event = "default"
+                    obstacle_interval = 120
+                    obstacle_multiplier = 50
                     font_surface = text_font.render("Score: " + str(score), False, "white")
                     lives_surface = text_font.render("Lives: " + str(lives), False, "white")
         screen.blit(nebula,nebula_rect)
