@@ -1,4 +1,4 @@
-#2.1
+#2.2 mobile
 import pygame
 from sys import exit
 from random import randint
