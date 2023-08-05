@@ -1,8 +1,14 @@
-#2.2 mobile
+#2.3 hybrid
 import pygame
 from sys import exit
 from random import randint
 import os
+
+resolution_modifier = 1
+global android
+android = 'ANDROID_STORAGE' in os.environ
+if android:
+    resolution_modifier = 1.125
 
 PATH = os.path.abspath(".") + "/"
 pygame.init()
@@ -28,21 +34,32 @@ class Spaceship(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft = (30,320))
         self.powerup = "default"
 
-    def spaceship_input(self):
-        mouse_x = pygame.mouse.get_pos()[0]
-        pygame.event.get()
-        touch = pygame.mouse.get_pressed()[0]
-        if touch and mouse_x < 720:
-            mouse_y = pygame.mouse.get_pos()[1]
-            if abs(mouse_y - self.rect.y) < 15:
-                self.rect.y = mouse_y
-            elif mouse_y < self.rect.y and self.rect.top > 0:
-                self.rect.y -= 15
-            elif mouse_y > self.rect.y and self.rect.bottom < 720:
-                self.rect.y += 15  
-        if touch and mouse_x > 720:
-            self.shoot()
-
+    if android:
+        def spaceship_input(self):
+            mouse_x = pygame.mouse.get_pos()[0]
+            pygame.event.get()
+            touch = pygame.mouse.get_pressed()[0]
+            if touch and mouse_x < 720:
+                mouse_y = pygame.mouse.get_pos()[1]
+                if abs(mouse_y - self.rect.y) < 15:
+                    self.rect.y = mouse_y
+                elif mouse_y < self.rect.y and self.rect.top > 0:
+                    self.rect.y -= 15
+                elif mouse_y > self.rect.y and self.rect.bottom < 720:
+                    self.rect.y += 15  
+            if touch and mouse_x > 720:
+                self.shoot()
+    else:
+        def spaceship_input(self):
+            keys = pygame.key.get_pressed()    
+            if keys[pygame.K_w] or keys[pygame.K_UP]:
+                if(self.rect.top > 0):
+                    self.rect.y -= 15
+            if keys[pygame.K_s] or keys[pygame.K_DOWN]:
+                if(self.rect.bottom < 720):
+                    self.rect.y += 15
+            if keys[pygame.K_SPACE]:
+                self.shoot()
 
     def shoot(self):
         if self.powerup == "default"  and len(projectiles.sprites()) < 1:
@@ -69,7 +86,7 @@ class MirrorShip(Spaceship):
     def __init__(self, spaceship_y):
         super().__init__()
         self.image = pygame.image.load(PATH+"Videogaim/"+graphics+"/mirrorship.png").convert_alpha()
-        self.rect = self.image.get_rect(midtop = (1360, spaceship_y))
+        self.rect = self.image.get_rect(midtop = (1200*resolution_modifier, spaceship_y))
         self.powerup = "enemy"
 
 
@@ -84,7 +101,7 @@ class Laser(pygame.sprite.Sprite):
         self.rect.x += self.speed
     
     def destroy(self):
-        if self.rect.x >= 1460:
+        if self.rect.x >= 1300*resolution_modifier:
             self.kill()
 
     def update(self):
@@ -108,18 +125,18 @@ class Meteor(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load(PATH+"Videogaim/"+graphics+"/Meteor_alt.png").convert_alpha()
         self.height = randint(120, 720)
-        self.rect = self.image.get_rect(bottomleft = (1440,self.height))
+        self.rect = self.image.get_rect(bottomleft = (1280*resolution_modifier,self.height))
         self.speed = randint(8, 20)
 
     def movement(self):
         if(self.rect.right > 0):
             self.rect.x -= self.speed
 
-    def kill(self, no_suicide=True):
+    def kill(self, not_suicide=True):
         super(Meteor, self).kill()
         if break_sound.get_num_channels() >= 1:
             pass
-        elif no_suicide:
+        elif not_suicide:
             break_sound.play()
           
 
@@ -129,7 +146,7 @@ class Meteor(pygame.sprite.Sprite):
 
     def destroy(self):
         if self.rect.right <= 0:
-            self.kill(no_suicide=False) 
+            self.kill(not_suicide=False) 
 
 class StormMeteor(Meteor):
     def __init__(self):
@@ -151,14 +168,19 @@ boss_count = 0
 meteorstorm_counter = 0
 
 # -display & clock
-screen = pygame.display.set_mode((1440,720), pygame.SCALED|pygame.FULLSCREEN)
+if android:
+    screen = pygame.display.set_mode((1280*resolution_modifier,720), pygame.SCALED|pygame.FULLSCREEN)
+else:
+    screen = pygame.display.set_mode((1280,720))
 pygame.display.set_caption("Shooty Shooty Rocks")
 gameIcon = pygame.image.load(PATH+"Videogaim/graphics/icon.png")
 pygame.display.set_icon(gameIcon)
 clock = pygame.time.Clock()
 
-darken = pygame.image.load(PATH+"Videogaim/graphics/darken.png").convert_alpha()
-
+if android:
+    darken = pygame.image.load(PATH+"Videogaim/"+graphics+"/darken_mobile.png").convert_alpha()
+else:
+    darken = pygame.image.load(PATH+"Videogaim/"+graphics+"/darken.png").convert_alpha()
 background_count = 0
 nebula = pygame.image.load(PATH+"Videogaim/"+graphics+"/Nebula1.png").convert()
 nebula_rect = nebula.get_rect(topleft = (background,0))
@@ -188,18 +210,18 @@ lives_surface = text_font.render("Lives: " + str(lives), False, "white")
 lives_rect = lives_surface.get_rect(topleft = font_rect.bottomleft)
 
 pause_surface = pause_font.render("Paused", False, "white")
-pause_rect = pause_surface.get_rect(center = (720,360))
+pause_rect = pause_surface.get_rect(center = (640*resolution_modifier,360))
 
 menu_surface = pause_font.render("Shooty Shooty Rocks",False,"#ffffff")
-menu_rect = menu_surface.get_rect(center = (720,190))
-menu_sub_surface = text_font.render("Press to start",False,"#ffffff")
-menu_sub_rect = menu_sub_surface.get_rect(center = (720,660))
+menu_rect = menu_surface.get_rect(center = (640*resolution_modifier,190))
+menu_sub_surface = text_font.render("Press Space to start",False,"#ffffff")
+menu_sub_rect = menu_sub_surface.get_rect(center = (640*resolution_modifier,660))
 menu_spaceship = pygame.image.load(PATH+"Videogaim/"+graphics+"/spaceship_alt.png").convert_alpha()
 menu_spaceship = pygame.transform.rotozoom(menu_spaceship,90,2)
-menu_spaceship_rect = menu_spaceship.get_rect(center = (720,380))
+menu_spaceship_rect = menu_spaceship.get_rect(center = (640*resolution_modifier,380))
 
 warning = pygame.image.load(PATH+"Videogaim/"+graphics+"/warning.png")
-warning_rect = warning.get_rect(center = (1360, 380))
+warning_rect = warning.get_rect(center = (1200*resolution_modifier, 380))
 
 #sounds
 laser_sound = pygame.mixer.Sound(PATH+"Videogaim/sounds/laser.mp3")
@@ -237,10 +259,10 @@ while True:
             nebula2_rect.x -= 1
             background_count = 0
 
-        if nebula_rect.right == 1440:
-            nebula2_rect.left = 1440
-        if nebula2_rect.right == 1440:
-            nebula_rect.left = 1440 
+        if nebula_rect.right == 1280*resolution_modifier:
+            nebula2_rect.left = 1280*resolution_modifier
+        if nebula2_rect.right == 1280*resolution_modifier:
+            nebula_rect.left = 1280*resolution_modifier 
 
         if score > 10 and gameplay_event == "default":
             if randint(0, int((1000/(score/10))*1000) ) == 1:
@@ -317,6 +339,7 @@ while True:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+            #gotta add pause for android 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pause = True
@@ -338,18 +361,21 @@ while True:
                 else:
                     with open(PATH+"Videogaim/save.txt", "w") as save:
                         save.write("True")
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                game_active = True
-                #reset values
-                lives = 3
-                score = 0
-                obstacles.empty()
-                projectiles.empty()
-                gameplay_event = "default"
-                obstacle_interval = 120
-                obstacle_multiplier = 50
-                font_surface = text_font.render("Score: " + str(score), False, "white")
-                lives_surface = text_font.render("Lives: " + str(lives), False, "white")
+            elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                ignore = True
+                if ignore or event.key == pygame.K_SPACE:
+                    ignore = False
+                    game_active = True
+                    #reset values
+                    lives = 3
+                    score = 0
+                    obstacles.empty()
+                    projectiles.empty()
+                    gameplay_event = "default"
+                    obstacle_interval = 120
+                    obstacle_multiplier = 50
+                    font_surface = text_font.render("Score: " + str(score), False, "white")
+                    lives_surface = text_font.render("Lives: " + str(lives), False, "white")
         screen.blit(nebula,nebula_rect)
         screen.blit(nebula2,nebula2_rect)
         screen.blit(darken,(0,0))
