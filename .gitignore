@@ -1,5 +1,8 @@
 ship.ico
 ShootyShootyRocks.exe
+icon.png
+bin/
+.buildozer/
 
 #pre-generated
 # Byte-compiled / optimized / DLL files
