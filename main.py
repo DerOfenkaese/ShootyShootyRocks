@@ -158,6 +158,8 @@ class StormMeteor(Meteor):
 lives = 3    
 background = 0 
 score = 0
+vulnerable = True
+i_frames = 0
 angle = 0
 game_active = False
 bob_counter = 0
@@ -241,7 +243,7 @@ while True:
             boss.draw(screen)
             spaceship.draw(screen)
             screen.blit(darken,(0,0))
-            screen.blit(pause_surface,pause_rect)   
+            screen.blit(pause_surface,pause_rect)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -307,9 +309,16 @@ while True:
             except IndexError:
                 pass
 
-        if(pygame.sprite.spritecollide(spaceship.sprite, obstacles, True)):
+        if(pygame.sprite.spritecollide(spaceship.sprite, obstacles, True)) and vulnerable:
             lives -= 1
             lives_surface = text_font.render("Lives: " + str(lives), False, "white")
+            i_frames = 90
+            vulnerable = False
+        
+        if i_frames > 0:
+            i_frames -= 1
+        else:
+            vulnerable = True
 
         #background                                                                   
         screen.blit(nebula,nebula_rect)
@@ -325,7 +334,8 @@ while True:
         if boss_count == 1:
             boss.draw(screen)
             boss.update()
-        spaceship.draw(screen)
+        if i_frames == 0 or i_frames % 5:
+                spaceship.draw(screen)
         spaceship.update()
         screen.blit(font_surface,font_rect)
         screen.blit(lives_surface,lives_rect)
@@ -369,6 +379,8 @@ while True:
                     #reset values
                     lives = 3
                     score = 0
+                    i_frames = 0
+                    vulnerable = True
                     obstacles.empty()
                     projectiles.empty()
                     gameplay_event = "default"
