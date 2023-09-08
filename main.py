@@ -1,4 +1,4 @@
-#2.3 hybrid
+#2.3.1 hybrid
 import pygame
 from sys import exit
 from random import randint
@@ -14,17 +14,25 @@ PATH = os.path.abspath(".") + "/"
 pygame.init()
 
 graphics = "graphics"
+sounds = "sounds"
 
 axolotl = False
+rtx = False
 
 with open(PATH+"Videogaim/save.txt") as save:
-    bool_string = save.read()
-    if bool_string == "True":
+    string = save.read()
+    if string == "Axolotl":
         axolotl = True
+    elif string == "rtx":
+        rtx = True
 
 
 if axolotl:
     graphics = "axolotl_graphics"
+
+if rtx:
+    graphics = "rtx_graphics"
+    sounds = "rtx_sounds"
 
 
 class Spaceship(pygame.sprite.Sprite):
@@ -226,8 +234,8 @@ warning = pygame.image.load(PATH+"Videogaim/"+graphics+"/warning.png")
 warning_rect = warning.get_rect(center = (1200*resolution_modifier, 380))
 
 #sounds
-laser_sound = pygame.mixer.Sound(PATH+"Videogaim/sounds/laser.mp3")
-break_sound = pygame.mixer.Sound(PATH+"Videogaim/sounds/explosion.mp3")
+laser_sound = pygame.mixer.Sound(PATH+"Videogaim/"+sounds+"/laser.mp3")
+break_sound = pygame.mixer.Sound(PATH+"Videogaim/"+sounds+"/explosion.mp3")
 
 #running loop
 while True:
@@ -343,6 +351,9 @@ while True:
         #death
         if lives == 0:
             game_active = False
+            if score == 69:
+                with open(PATH+"Videogaim/save.txt", "w") as save:
+                    save.write("rtx")
 
         #allows user to quit    
         for event in pygame.event.get():    
@@ -370,7 +381,7 @@ while True:
                         save.write("False")
                 else:
                     with open(PATH+"Videogaim/save.txt", "w") as save:
-                        save.write("True")
+                        save.write("Axolotl")
             elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                 ignore = True
                 if ignore or event.key == pygame.K_SPACE:
